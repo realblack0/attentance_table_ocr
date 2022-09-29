@@ -84,7 +84,7 @@ def generate_feat_image(rgb_image, thresh_intensity):
 
 
 """Find the table outline by a simple rule"""
-def gererate_roi(feat_image, file_format, padding):
+def gererate_roi(feat_image, rgb_image, file_format, padding):
     if file_format == "png":
         # horizon region of interest
         hor_position = np.where(feat_image.sum(axis=0) > 0)[0]
@@ -231,7 +231,7 @@ def extract_table_from_image(
         df (pandas.DataFrame) : the extracted table 
     """
     feat_image = generate_feat_image(rgb_image, thresh_intensity)
-    feat_roi, rgb_roi = gererate_roi(feat_image, file_format, padding)
+    feat_roi, rgb_roi = gererate_roi(feat_image, rgb_image, file_format, padding)
     total = ocr_by_batched_row(feat_roi, rgb_roi, padding=padding, n_roi_rows=n_roi_rows, eps_pixel=eps_pixel, progress_bar=batch_progress_bar)
     df = total_to_df(total) # list -> df
     return df
