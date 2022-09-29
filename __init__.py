@@ -1,1 +1,1 @@
-from attentance_table_ocr import *
+from .attentance_table_ocr import *
