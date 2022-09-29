@@ -4,7 +4,7 @@ from pdf2image import convert_from_path, convert_from_bytes
 import easyocr
 from tqdm import tqdm
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
     
 # """Parameter"""
 # batch_size = 5
