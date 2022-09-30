@@ -55,7 +55,8 @@ def load_files_colab():
         rgb_images = []
         if file_format in ["png", "jpg"]:
             image = Image.open(BytesIO(uploaded[file_name]))
-            rgb_image = np.array(image)
+            rgba_image = np.array(image)
+            rgb_image = cv2.cvtColor(rgba_image, cv2.COLOR_RGBA2RGB)
             rgb_images.append(rgb_image)
         elif file_format == "pdf":
             pages = convert_from_bytes(uploaded[file_name])
