@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
     
 # """Parameter"""
 # batch_size = 5
-# eps_pixel = 20 
+# eps_pixel = 15 
 # padding = 20 
 # thresh_intensity = 20
 # n_roi_rows = 5
@@ -153,6 +153,21 @@ def post_process(row):
                 row[i] = row[i].replace(value, key)
     return row
 
+def row_to_texts(row, eps_pixel):
+    texts = []
+    prev_rx = -999 # right x position
+    prev_text = ""
+    for position, text in row:
+        if position[0][0] - prev_rx > eps_pixel: # left x - prev_rx
+            texts.append(prev_text)
+            prev_text = text
+            prev_rx = position[1][0] # right x position
+        else:
+            prev_text = text if prev_text == "" else (prev_text + " " + text)
+    texts.append(prev_text) # last text
+    texts.pop(0) # first empty string
+    return texts
+
 def ocr(image, eps_pixel):
     result = reader.readtext(image)
     result = sorted(result, key=lambda x:x[0][0][1]) # by top y position
@@ -164,7 +179,7 @@ def ocr(image, eps_pixel):
             row.append((position, text))
         else:
             sorted_row = sorted(row, key=lambda x:x[0][0][0]) # by left x position
-            row_texts = [_[1] for _ in sorted_row]
+            row_texts = row_to_texts(sorted_row, eps_pixel)
             row_pp = post_process(row_texts)
             rows.append(row_pp)
             prev_ty = position[0][1] # previous top y position
@@ -230,7 +245,7 @@ def extract_table_from_image(
     rgb_image,
     file_format,
     batch_size = 5,
-    eps_pixel = 20 ,
+    eps_pixel = 15 ,
     padding = 20 ,
     thresh_intensity = 20,
     n_roi_rows=5,
