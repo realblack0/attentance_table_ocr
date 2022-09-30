@@ -4,7 +4,7 @@ from pdf2image import convert_from_path, convert_from_bytes
 import easyocr
 from tqdm import tqdm
 import pandas as pd
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
     
 # """Parameter"""
 # batch_size = 5
@@ -39,6 +39,7 @@ def load_files_local(file_paths):
             raise
         name_images[file_name] = rgb_images
     return name_images
+
 
 # colab
 def load_files_colab():
@@ -150,7 +151,6 @@ def post_process(row):
             for value in values:
                 row[i] = row[i].replace(value, key)
     return row
-    return row
 
 def ocr(image, eps_pixel):
     result = reader.readtext(image)
@@ -201,17 +201,19 @@ def ocr_by_batched_row(feat_roi, rgb_roi, padding, n_roi_rows, eps_pixel, progre
     for step in steps:
         a = b
         b = end_of_rows[step*n_roi_rows]
-        crop_image1 = rgb_roi[a+padding:b+padding, :, :]
+        crop_image1 = rgb_roi[a+padding:b+padding, : ,:]
         rows = ocr(crop_image1, eps_pixel)
         total = total + rows
         # plt.imshow(crop_image1)
         # plt.show()
+        # print([(row[0], len(row)) for row in rows if row])
     else:
-        crop_image1 = rgb_roi[b+padding:, :, :]
+        crop_image1 = rgb_roi[b+padding:, : ,:]
         rows = ocr(crop_image1, eps_pixel)
         total = total + rows
         # plt.imshow(crop_image1)
         # plt.show()
+        # print([(row[0], len(row)) for row in rows if row])
     total = [row for row in total if len(row)>4]
     return total
 
@@ -249,3 +251,4 @@ def extract_table_from_image(
     total = ocr_by_batched_row(feat_roi, rgb_roi, padding=padding, n_roi_rows=n_roi_rows, eps_pixel=eps_pixel, progress_bar=batch_progress_bar)
     df = total_to_df(total) # list -> df
     return df
+
