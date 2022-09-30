@@ -154,6 +154,7 @@ def post_process(row):
 
 def ocr(image, eps_pixel):
     result = reader.readtext(image)
+    result = sorted(result, key=lambda x:x[0][0][1]) # by top y position
     row = []
     rows = []
     prev_ty = -999
